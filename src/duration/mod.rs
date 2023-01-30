@@ -1,6 +1,6 @@
 use num::Integer;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Duration {
     numerator: i32,
     denominator: i32,
@@ -24,9 +24,49 @@ impl Duration {
         self.numerator as f32 / self.denominator as f32
     }
 
+    pub fn abs(&self) -> Self {
+        Self::new(self.numerator.abs(), self.denominator)
+    }
+
+    pub fn is_negative(&self) -> bool {
+        self.as_float().is_sign_negative()
+    }
+
     fn reduce(a: i32, b: i32) -> (i32, i32) {
         let g = a.gcd(&b);
-        (a / g, b / g)
+        match (a / g, b / g) {
+            (a, b) if b < 0 => (-a, -b),
+            (a, b) => (a, b),
+        }
+    }
+
+    pub fn equal_or_shorter_printable_duration(&self) -> Self {
+        if self.is_printable() {
+            *self
+        } else {
+            Self::new(self.numerator - 1, self.denominator)
+        }
+    }
+
+    pub fn equal_or_greater_printable_duration(&self) -> Self {
+        if self.is_printable() {
+            *self
+        } else {
+            Self::new(self.numerator + 1, self.denominator)
+        }
+    }
+
+    pub fn to_printable_duration_list(&self) -> Vec<Self> {
+        if self.is_printable() {
+            vec![*self]
+        } else if self < &0. {
+            vec![]
+        } else {
+            let first = self.equal_or_shorter_printable_duration();
+            let mut tail = (*self - first).to_printable_duration_list();
+            tail.insert(0, first);
+            tail
+        }
     }
 
     pub fn is_printable(&self) -> bool {
@@ -48,6 +88,7 @@ impl Duration {
     }
 }
 
+mod lilypond;
 mod ops;
 
 #[cfg(test)]
