@@ -14,4 +14,12 @@ name = "copland"
 path = "src/bin.rs"
 
 [dependencies]
+itertools = "0.10.5"
 num = "0.4.0"
+thiserror = "1.0"
+
+[dev-dependencies]
+futures-util = "0.3.14"
+reqwest = { version = "0.11.3", features = ["stream"] }
+tokio = { version = "1", features = ["full"] }
+tokio-test = "*"
