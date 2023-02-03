@@ -1,0 +1,29 @@
+name: "CI"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust: ["stable", "nightly"]
+    name: "[${{matrix.rust}}] CI Tests"
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{matrix.rust}}
+          override: true
+
+      - run: cargo build
+
+      - run: cargo test -- --include-ignored
