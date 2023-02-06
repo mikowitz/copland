@@ -25,6 +25,14 @@ impl IntervalSize {
             Self::Octave => 12.,
         }
     }
+
+    pub fn can_be_perfect(self) -> bool {
+        matches!(self, Self::Unison | Self::Fourth | Self::Fifth | Self::Octave)
+    }
+
+    pub fn staff_spaces(self) -> i32 {
+        self as i32 - 1
+    }
 }
 
 impl fmt::Display for IntervalSize {
@@ -35,8 +43,8 @@ impl fmt::Display for IntervalSize {
 }
 
 impl From<i32> for IntervalSize {
-    fn from(int: i32) -> Self {
-        match num::FromPrimitive::from_i32(int) {
+    fn from(value: i32) -> Self {
+        match num::FromPrimitive::from_i32(value) {
             Some(size) => size,
             None => todo!(),
         }

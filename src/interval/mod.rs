@@ -48,6 +48,11 @@ impl Interval {
         }
     }
 
+    pub fn staff_spaces(&self) -> i32 {
+        let raw_staff_spaces = self.interval_class.staff_spaces() + 7 * self.octaves;
+        raw_staff_spaces * (self.polarity_to_float() as i32)
+    }
+
     pub fn quarter_sharp(&self) -> Self {
         let mut interval_class = self.interval_class;
         let mut octaves = self.octaves;
@@ -81,7 +86,7 @@ impl Interval {
     }
 
     fn polarity_to_float(&self) -> f32 {
-        self.polarity.map_or(1., |pol| pol.to_float())
+        self.polarity.map_or(1., Polarity::to_float)
     }
 }
 
