@@ -91,6 +91,15 @@ fn semitones() {
 }
 
 #[test]
+fn staff_spaces() {
+    let interval = Interval::new(Major, 9);
+    let neg = -interval;
+
+    assert_eq!(interval.staff_spaces(), 8);
+    assert_eq!(neg.staff_spaces(), -8);
+}
+
+#[test]
 fn to_string() {
     let interval = Interval::new(Major, 9);
     let neg = -interval;

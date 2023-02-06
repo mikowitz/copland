@@ -1,8 +1,8 @@
 use super::IntervalClass;
-use crate::interval::interval_size::IntervalSize::*;
-use crate::interval::polarity::Polarity::*;
-use crate::interval::quality::Quality::*;
-use crate::interval::quartertone::Quartertone::*;
+use crate::interval::IntervalSize::*;
+use crate::interval::Polarity::*;
+use crate::interval::Quality::*;
+use crate::interval::Quartertone::*;
 
 #[test]
 fn new() {

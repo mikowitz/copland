@@ -34,6 +34,10 @@ impl IntervalClass {
         }
     }
 
+    pub fn staff_spaces(&self) -> i32 {
+        self.size.staff_spaces()
+    }
+
     pub fn quarter_sharp(&self) -> Self {
         self.apply_quartertone(QuarterSharp)
     }
@@ -73,23 +77,25 @@ impl IntervalClass {
         let quartertone = Some(quartertone);
         let polarity = self.polarity.or(Some(Positive));
         Self {
-            quartertone,
             polarity,
+            quartertone,
             ..*self
         }
     }
 
     pub fn semitones(&self) -> f32 {
         self.polarity_to_float()
-            * (self.size.to_float() + self.quality.to_float() + self.quartertone_to_float())
+            * (self.size.to_float()
+                + self.quality.to_float(self.size)
+                + self.quartertone_to_float())
     }
 
     fn polarity_to_float(&self) -> f32 {
-        self.polarity.map_or(1., |pol| pol.to_float())
+        self.polarity.map_or(1., Polarity::to_float)
     }
 
     fn quartertone_to_float(&self) -> f32 {
-        self.quartertone.map_or(0., |qt| qt.to_float())
+        self.quartertone.map_or(0., Quartertone::to_float)
     }
 }
 
@@ -105,8 +111,8 @@ impl Neg for IntervalClass {
 
 impl fmt::Display for IntervalClass {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let polarity = self.polarity.map_or("".to_string(), |pol| pol.to_string());
-        let quartertone = self.quartertone.map_or("".to_string(), |qt| qt.to_string());
+        let polarity = self.polarity.map_or(String::new(), |pol| pol.to_string());
+        let quartertone = self.quartertone.map_or(String::new(), |qt| qt.to_string());
         write!(f, "{polarity}{}{quartertone}{}", self.quality, self.size)
     }
 }

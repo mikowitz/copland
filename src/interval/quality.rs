@@ -1,3 +1,4 @@
+use super::IntervalSize;
 use std::fmt;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -5,17 +6,23 @@ pub enum Quality {
     Perfect,
     Major,
     Minor,
-    Diminished(i32),
-    Augmented(i32),
+    Diminished(u32),
+    Augmented(u32),
 }
 
 impl Quality {
-    pub fn to_float(self) -> f32 {
+    pub fn to_float(self, interval_size: IntervalSize) -> f32 {
         match self {
-            Self::Perfect => 0.,
-            Self::Major => 0.,
+            Self::Perfect | Self::Major => 0.,
             Self::Minor => -1.,
-            Self::Diminished(i) => -1. * i as f32,
+            Self::Diminished(i) => {
+                let base = -1. * i as f32;
+                if interval_size.can_be_perfect() {
+                    base
+                } else {
+                    base - 1.
+                }
+            }
             Self::Augmented(i) => 1. * i as f32,
         }
     }
