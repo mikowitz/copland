@@ -1,3 +1,5 @@
+#![allow(clippy::module_name_repetitions)]
+
 mod interval_class;
 pub use interval_class::IntervalClass;
 
@@ -18,6 +20,7 @@ use std::ops::Neg;
 
 type Octaves = i32;
 
+#[must_use]
 #[derive(Clone, Copy, Debug)]
 pub struct Interval {
     interval_class: IntervalClass,
@@ -30,7 +33,8 @@ impl Interval {
         let (sign, interval_class_size, octaves) = calculate_octaves(quality, size);
 
         let mut interval_class =
-            IntervalClass::new(quality, IntervalSize::from(interval_class_size)).unwrap();
+            IntervalClass::new(quality, IntervalSize::from(interval_class_size)).
+            expect("Should never error at this point, but got {quality} {interval_class_size} trying to create a new interval.");
         let polarity = if interval_class.is_perfect_unison() {
             None
         } else {
@@ -48,6 +52,8 @@ impl Interval {
         }
     }
 
+    #[must_use]
+    #[allow(clippy::cast_possible_truncation)]
     pub fn staff_spaces(&self) -> i32 {
         let raw_staff_spaces = self.interval_class.staff_spaces() + 7 * self.octaves;
         raw_staff_spaces * (self.polarity_to_float() as i32)
@@ -57,7 +63,9 @@ impl Interval {
         let mut interval_class = self.interval_class;
         let mut octaves = self.octaves;
         if self.interval_class.is_perfect_octave() {
-            interval_class = IntervalClass::new(Quality::Perfect, IntervalSize::Unison).unwrap();
+            interval_class = IntervalClass::new(Quality::Perfect, IntervalSize::Unison).expect(
+                "Should never error creating a Perfect Unison. Something has gone very wrong.",
+            );
             octaves += 1;
         }
         Self {
@@ -71,7 +79,9 @@ impl Interval {
         let mut interval_class = self.interval_class;
         let mut octaves = self.octaves;
         if self.interval_class.is_perfect_octave() {
-            interval_class = IntervalClass::new(Quality::Perfect, IntervalSize::Unison).unwrap();
+            interval_class = IntervalClass::new(Quality::Perfect, IntervalSize::Unison).expect(
+                "Should never error creating a Perfect Unison. Something has gone very wrong.",
+            );
             octaves += 1;
         }
         Self {
@@ -81,8 +91,11 @@ impl Interval {
         }
     }
 
+    #[must_use]
+    #[allow(clippy::cast_precision_loss)]
     pub fn semitones(&self) -> f32 {
-        self.interval_class.semitones() + 12. * self.polarity_to_float() * self.octaves as f32
+        (12. * self.polarity_to_float())
+            .mul_add(self.octaves as f32, self.interval_class.semitones())
     }
 
     fn polarity_to_float(&self) -> f32 {

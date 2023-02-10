@@ -1,6 +1,8 @@
+use crate::error::Error;
 use std::fmt;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[must_use]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Accidental {
     DoubleFlat,
     ThreeQuarterFlat,
@@ -14,7 +16,8 @@ pub enum Accidental {
 }
 
 impl Accidental {
-    pub fn as_float(&self) -> f32 {
+    #[must_use]
+    pub const fn as_float(&self) -> f32 {
         match self {
             Self::DoubleFlat => -2.,
             Self::ThreeQuarterFlat => -1.5,
@@ -28,29 +31,25 @@ impl Accidental {
         }
     }
 
-    pub fn from_float(f: f32) -> Self {
-        match normalize_accidental((f * 2.) as i32) {
-            -4 => Self::DoubleFlat,
-            -3 => Self::ThreeQuarterFlat,
-            -2 => Self::Flat,
-            -1 => Self::QuarterFlat,
-            0 => Self::Natural,
-            1 => Self::QuarterSharp,
-            2 => Self::Sharp,
-            3 => Self::ThreeQuarterSharp,
-            4 => Self::DoubleSharp,
-            _ => todo!(),
+    /// Returns an accidental from a float in the range [-2, 2]
+    ///
+    /// # Errors
+    ///
+    /// Will return an error if the input float is not in the range [-2, 2]
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn from_float(f: f32) -> Result<Self, Error> {
+        match (f * 2.) as i32 {
+            -4 => Ok(Self::DoubleFlat),
+            -3 => Ok(Self::ThreeQuarterFlat),
+            -2 => Ok(Self::Flat),
+            -1 => Ok(Self::QuarterFlat),
+            0 => Ok(Self::Natural),
+            1 => Ok(Self::QuarterSharp),
+            2 => Ok(Self::Sharp),
+            3 => Ok(Self::ThreeQuarterSharp),
+            4 => Ok(Self::DoubleSharp),
+            _ => Err(Error::InvalidAccidentalSize(f)),
         }
-    }
-}
-
-fn normalize_accidental(i: i32) -> i32 {
-    if i < -4 {
-        normalize_accidental(i + 12)
-    } else if i > 4 {
-        normalize_accidental(i - 4)
-    } else {
-        i
     }
 }
 

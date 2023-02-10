@@ -1,6 +1,7 @@
 use std::fmt;
 
-#[derive(Clone, Copy, Debug, PartialEq, FromPrimitive)]
+#[must_use]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, FromPrimitive)]
 pub enum IntervalSize {
     Unison = 1,
     Second = 2,
@@ -13,7 +14,8 @@ pub enum IntervalSize {
 }
 
 impl IntervalSize {
-    pub fn to_float(self) -> f32 {
+    #[must_use]
+    pub const fn to_float(self) -> f32 {
         match self {
             Self::Unison => 0.,
             Self::Second => 2.,
@@ -26,11 +28,16 @@ impl IntervalSize {
         }
     }
 
-    pub fn can_be_perfect(self) -> bool {
-        matches!(self, Self::Unison | Self::Fourth | Self::Fifth | Self::Octave)
+    #[must_use]
+    pub const fn can_be_perfect(self) -> bool {
+        matches!(
+            self,
+            Self::Unison | Self::Fourth | Self::Fifth | Self::Octave
+        )
     }
 
-    pub fn staff_spaces(self) -> i32 {
+    #[must_use]
+    pub const fn staff_spaces(self) -> i32 {
         self as i32 - 1
     }
 }
@@ -44,9 +51,6 @@ impl fmt::Display for IntervalSize {
 
 impl From<i32> for IntervalSize {
     fn from(value: i32) -> Self {
-        match num::FromPrimitive::from_i32(value) {
-            Some(size) => size,
-            None => todo!(),
-        }
+        num::FromPrimitive::from_i32(value).map_or_else(|| todo!(), |size| size)
     }
 }

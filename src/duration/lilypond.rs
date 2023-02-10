@@ -2,6 +2,7 @@ use super::Duration;
 use crate::error::Error;
 use crate::to_lilypond::ToLilypond;
 
+#[allow(clippy::cast_possible_truncation)]
 fn dots_count(duration: Duration) -> u32 {
     format!("{:b}", duration.numerator)
         .chars()
@@ -14,6 +15,8 @@ fn dots(duration: Duration) -> String {
     ".".repeat(dots_count(duration) as usize)
 }
 
+#[allow(clippy::cast_possible_truncation)]
+#[allow(clippy::cast_sign_loss)]
 fn base_duration_string(duration: Duration) -> String {
     match duration.as_float() {
         f if f >= 8. => "\\maxima".to_string(),
@@ -22,7 +25,7 @@ fn base_duration_string(duration: Duration) -> String {
         _ => {
             format!(
                 "{}",
-                2_i32.pow((duration.denominator as f64).log2() as u32 - dots_count(duration))
+                2_i32.pow(f64::from(duration.denominator).log2() as u32 - dots_count(duration))
             )
         }
     }

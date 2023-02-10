@@ -1,7 +1,13 @@
 [package]
 name = "copland"
+description = "A library for generating macro and micro structure for musical scores, and the resulting Lilypond output."
 version = "0.1.0"
 edition = "2021"
+categories = ["data-structures", "mathematics", "simulation"]
+keywords = ["music", "generative", "library"]
+license = "MIT"
+repository = "https://github.com/mikowitz/copland"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -24,4 +30,4 @@ thiserror = "1.0"
 futures-util = "0.3.14"
 reqwest = { version = "0.11.3", features = ["stream"] }
 tokio = { version = "1", features = ["full"] }
-tokio-test = "*"
+tokio-test = "0.4"

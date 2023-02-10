@@ -1,7 +1,7 @@
 use super::IntervalSize;
 use std::fmt;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Quality {
     Perfect,
     Major,
@@ -11,6 +11,8 @@ pub enum Quality {
 }
 
 impl Quality {
+    #[must_use]
+    #[allow(clippy::cast_precision_loss)]
     pub fn to_float(self, interval_size: IntervalSize) -> f32 {
         match self {
             Self::Perfect | Self::Major => 0.,

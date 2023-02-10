@@ -1,6 +1,7 @@
 use num::Integer;
 
-#[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
+#[must_use]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd)]
 pub struct Duration {
     numerator: i32,
     denominator: i32,
@@ -16,10 +17,13 @@ impl Duration {
         }
     }
 
-    pub fn as_tuple(self) -> (i32, i32) {
+    #[must_use]
+    pub const fn as_tuple(self) -> (i32, i32) {
         (self.numerator, self.denominator)
     }
 
+    #[must_use]
+    #[allow(clippy::cast_precision_loss)]
     pub fn as_float(self) -> f32 {
         self.numerator as f32 / self.denominator as f32
     }
@@ -28,6 +32,7 @@ impl Duration {
         Self::new(self.numerator.abs(), self.denominator)
     }
 
+    #[must_use]
     pub fn is_negative(self) -> bool {
         self.as_float().is_sign_negative()
     }
@@ -56,6 +61,7 @@ impl Duration {
         }
     }
 
+    #[must_use]
     pub fn to_printable_duration_list(self) -> Vec<Self> {
         if self.is_printable() {
             vec![self]
@@ -69,6 +75,7 @@ impl Duration {
         }
     }
 
+    #[must_use]
     pub fn is_printable(self) -> bool {
         self.is_printable_length() && self.has_printable_denominator() && !self.is_tied()
     }
@@ -79,7 +86,7 @@ impl Duration {
         0. < f && f < 16.
     }
 
-    fn has_printable_denominator(self) -> bool {
+    const fn has_printable_denominator(self) -> bool {
         self.denominator & (self.denominator - 1) == 0
     }
 

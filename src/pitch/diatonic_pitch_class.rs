@@ -1,6 +1,7 @@
 use std::fmt;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[must_use]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DiatonicPitchClass {
     C = 0,
     D = 2,
@@ -12,7 +13,8 @@ pub enum DiatonicPitchClass {
 }
 
 impl DiatonicPitchClass {
-    pub fn index(&self) -> i32 {
+    #[must_use]
+    pub const fn index(&self) -> i32 {
         match self {
             Self::C => 0,
             Self::D => 1,
@@ -26,6 +28,7 @@ impl DiatonicPitchClass {
 
     pub fn from_index(index: i32) -> Self {
         match index {
+            i32::MIN..=-1i32 => Self::from_index(index.rem_euclid(7)),
             0 => Self::C,
             1 => Self::D,
             2 => Self::E,
@@ -33,20 +36,19 @@ impl DiatonicPitchClass {
             4 => Self::G,
             5 => Self::A,
             6 => Self::B,
-            _ => todo!(),
+            7i32..=i32::MAX => Self::from_index(index.rem_euclid(7)),
         }
     }
 
     pub fn shift(self, distance: i32) -> Self {
         match distance {
             0 => self,
-            d if d < 0 => self.prev().shift(d + 1),
-            d if d > 0 => self.next().shift(d - 1),
-            _ => todo!()
+            i32::MIN..=-1i32 => self.prev().shift(distance + 1),
+            1i32..=i32::MAX => self.next().shift(distance - 1),
         }
     }
 
-    pub fn next(self) -> Self {
+    pub const fn next(self) -> Self {
         match self {
             Self::C => Self::D,
             Self::D => Self::E,
@@ -58,7 +60,7 @@ impl DiatonicPitchClass {
         }
     }
 
-    pub fn prev(self) -> Self {
+    pub const fn prev(self) -> Self {
         match self {
             Self::C => Self::B,
             Self::D => Self::C,
