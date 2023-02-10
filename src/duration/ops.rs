@@ -2,10 +2,10 @@ use super::Duration;
 use std::cmp::{PartialEq, PartialOrd};
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-impl Add<Duration> for Duration {
+impl Add<Self> for Duration {
     type Output = Self;
 
-    fn add(self, rhs: Duration) -> Self {
+    fn add(self, rhs: Self) -> Self {
         Self::new(
             self.numerator * rhs.denominator + rhs.numerator * self.denominator,
             self.denominator * rhs.denominator,
@@ -13,10 +13,10 @@ impl Add<Duration> for Duration {
     }
 }
 
-impl Sub<Duration> for Duration {
+impl Sub<Self> for Duration {
     type Output = Self;
 
-    fn sub(self, rhs: Duration) -> Self {
+    fn sub(self, rhs: Self) -> Self {
         Self::new(
             self.numerator * rhs.denominator - rhs.numerator * self.denominator,
             self.denominator * rhs.denominator,
@@ -24,10 +24,10 @@ impl Sub<Duration> for Duration {
     }
 }
 
-impl Mul<Duration> for Duration {
+impl Mul<Self> for Duration {
     type Output = Self;
 
-    fn mul(self, rhs: Duration) -> Self {
+    fn mul(self, rhs: Self) -> Self {
         Self::new(
             self.numerator * rhs.numerator,
             self.denominator * rhs.denominator,
@@ -43,10 +43,10 @@ impl Mul<i32> for Duration {
     }
 }
 
-impl Div<Duration> for Duration {
+impl Div<Self> for Duration {
     type Output = Self;
 
-    fn div(self, rhs: Duration) -> Self {
+    fn div(self, rhs: Self) -> Self {
         Self::new(
             self.numerator * rhs.denominator,
             self.denominator * rhs.numerator,
@@ -67,7 +67,7 @@ impl Neg for Duration {
     type Output = Self;
 
     fn neg(self) -> Self {
-        Duration::new(-self.numerator, self.denominator)
+        Self::new(-self.numerator, self.denominator)
     }
 }
 

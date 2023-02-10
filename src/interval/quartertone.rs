@@ -1,13 +1,14 @@
 use std::fmt;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Quartertone {
     QuarterSharp,
     QuarterFlat,
 }
 
 impl Quartertone {
-    pub fn to_float(self) -> f32 {
+    #[must_use]
+    pub const fn to_float(self) -> f32 {
         match self {
             Self::QuarterSharp => 0.5,
             Self::QuarterFlat => -0.5,

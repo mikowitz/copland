@@ -1,3 +1,5 @@
+#![allow(clippy::module_name_repetitions)]
+
 use crate::interval::Interval;
 use std::fmt;
 
@@ -16,12 +18,14 @@ struct Octave {
 }
 
 impl Octave {
+    #[allow(clippy::cast_precision_loss)]
     fn as_float(self) -> f32 {
         12. * (self.octave as f32 - 4.)
     }
 }
 
 impl fmt::Display for Octave {
+    #[allow(clippy::cast_sign_loss)]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let o = match self.octave {
             3 => String::new(),
@@ -33,6 +37,7 @@ impl fmt::Display for Octave {
     }
 }
 
+#[must_use]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Pitch {
     pitch_class: PitchClass,
@@ -40,7 +45,7 @@ pub struct Pitch {
 }
 
 impl Pitch {
-    pub fn new(pitch_class: PitchClass, octave: i32) -> Self {
+    pub const fn new(pitch_class: PitchClass, octave: i32) -> Self {
         let octave = Octave { octave };
         Self {
             pitch_class,
@@ -48,14 +53,16 @@ impl Pitch {
         }
     }
 
+    #[must_use]
     pub fn semitones(self) -> f32 {
         self.pitch_class.as_float() + self.octave.as_float()
     }
 
-    pub fn pitch_class(self) -> PitchClass {
+    pub const fn pitch_class(self) -> PitchClass {
         self.pitch_class
     }
 
+    #[allow(clippy::cast_possible_truncation)]
     pub fn transpose(self, interval: Interval) -> Self {
         let pitch_number = self.semitones() + interval.semitones();
         let current_dpc = self.pitch_class().diatonic_pitch_class();
@@ -72,13 +79,14 @@ impl Pitch {
     }
 }
 
+#[allow(clippy::cast_precision_loss)]
 fn simplify(
     dpc: DiatonicPitchClass,
     mut semitones: f32,
     mut octave: i32,
 ) -> (DiatonicPitchClass, Accidental, i32) {
     if semitones.abs() <= 2. {
-        return (dpc, Accidental::from_float(semitones), octave);
+        return (dpc, Accidental::from_float(semitones).unwrap(), octave);
     }
     let mut dpc_index = dpc.index();
 
@@ -107,11 +115,12 @@ fn simplify(
     }
 
     let new_dpc = DiatonicPitchClass::from_index(dpc_index);
-    let new_accidental = Accidental::from_float(semitones);
+    let new_accidental = Accidental::from_float(semitones).unwrap();
 
     (new_dpc, new_accidental, octave)
 }
 
+#[allow(clippy::cast_precision_loss)]
 fn to_nearest_octave(pitch_number: f32, pc_number: i32) -> f32 {
     let target_pc = pitch_number.rem_euclid(12.);
     let down = (target_pc - pc_number as f32).rem_euclid(12.);

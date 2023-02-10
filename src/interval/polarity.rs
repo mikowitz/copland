@@ -1,22 +1,25 @@
 use std::fmt;
 use std::ops::Neg;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Polarity {
     Positive,
     Negative,
 }
 
 impl Polarity {
+    #[must_use]
     pub fn is_positive(self) -> bool {
         self == Self::Positive
     }
 
+    #[must_use]
     pub fn is_negative(self) -> bool {
         self == Self::Negative
     }
 
-    pub fn to_float(self) -> f32 {
+    #[must_use]
+    pub const fn to_float(self) -> f32 {
         match self {
             Self::Positive => 1.,
             Self::Negative => -1.,
