@@ -19,6 +19,6 @@ jobs:
         with:
           toolchain: nightly
 
-      - run: cargo build
+      - run: cargo build --lib
 
-      - run: cargo test -- --include-ignored
+      - run: cargo test --lib -- --include-ignored

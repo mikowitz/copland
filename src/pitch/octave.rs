@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Octave {
     octave: i32,
 }

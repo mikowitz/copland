@@ -18,7 +18,7 @@ jobs:
           toolchain: nightly
           components: clippy
 
-      - run: cargo build
+      - run: cargo build --lib
 
       - run: cargo clippy --lib --all-features
 
