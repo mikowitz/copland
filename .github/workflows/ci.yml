@@ -11,16 +11,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        rust: ["stable", "nightly"]
-    name: "[${{matrix.rust}}] CI Tests"
+    name: "[nightly] CI Tests"
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{matrix.rust}}
+          toolchain: nightly
 
       - run: cargo build
 

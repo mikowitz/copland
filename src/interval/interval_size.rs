@@ -1,8 +1,9 @@
 use std::fmt;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, Eq, PartialEq, FromPrimitive)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, FromPrimitive)]
 pub enum IntervalSize {
+    #[default]
     Unison = 1,
     Second = 2,
     Third = 3,
@@ -28,6 +29,25 @@ impl IntervalSize {
         }
     }
 
+    pub const fn from_u32(size: u32) -> Self {
+        match size {
+            1 => Self::Unison,
+            2 => Self::Second,
+            3 => Self::Third,
+            4 => Self::Fourth,
+            5 => Self::Fifth,
+            6 => Self::Sixth,
+            7 => Self::Seventh,
+            8 => Self::Octave,
+            _ => Self::from_u32(size.rem_euclid(8) + 1),
+        }
+    }
+
+    #[must_use]
+    pub const fn is_unison(self) -> bool {
+        matches!(self, Self::Unison)
+    }
+
     #[must_use]
     pub const fn can_be_perfect(self) -> bool {
         matches!(
@@ -46,11 +66,5 @@ impl fmt::Display for IntervalSize {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let size = *self as i32;
         write!(f, "{size}")
-    }
-}
-
-impl From<u32> for IntervalSize {
-    fn from(value: u32) -> Self {
-        num::FromPrimitive::from_u32(value).map_or_else(|| todo!(), |size| size)
     }
 }

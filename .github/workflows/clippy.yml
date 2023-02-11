@@ -9,21 +9,18 @@ on:
 jobs:
   clippy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        rust: ["stable", "nightly"]
-    name: "[${{matrix.rust}}] Clippy"
+    name: "[nightly] Clippy"
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{matrix.rust}}
+          toolchain: nightly
           components: clippy
 
       - run: cargo build
 
-      - run: cargo clippy --all-features
+      - run: cargo clippy --lib --all-features
 
-      - run: cargo clippy -- -W clippy::pedantic -W clippy::nursery -W clippy::cargo
+      - run: cargo clippy --lib -- -W clippy::pedantic -W clippy::nursery -W clippy::cargo
 

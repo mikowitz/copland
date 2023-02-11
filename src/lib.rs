@@ -1,3 +1,6 @@
+#![feature(const_option)]
+#![feature(const_result_drop)]
+
 #[macro_use]
 extern crate num_derive;
 
