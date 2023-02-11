@@ -29,22 +29,17 @@ pub struct Interval {
 }
 
 impl Interval {
-    pub fn new(quality: Quality, size: i32) -> Self {
-        let (sign, interval_class_size, octaves) = calculate_octaves(quality, size);
+    pub fn new(quality: Quality, size: u32) -> Self {
+        let (interval_class_size, octaves) = calculate_octaves(quality, size);
 
-        let mut interval_class =
+        let interval_class =
             IntervalClass::new(quality, IntervalSize::from(interval_class_size)).
             expect("Should never error at this point, but got {quality} {interval_class_size} trying to create a new interval.");
         let polarity = if interval_class.is_perfect_unison() {
             None
         } else {
-            Some(Polarity::from(sign))
+            Some(Polarity::Positive)
         };
-        if let Some(pol) = polarity {
-            if pol.is_negative() {
-                interval_class = -interval_class;
-            }
-        }
         Self {
             interval_class,
             octaves,
@@ -60,22 +55,14 @@ impl Interval {
     }
 
     pub fn quarter_sharp(&self) -> Self {
-        let mut interval_class = self.interval_class;
-        let mut octaves = self.octaves;
-        if self.interval_class.is_perfect_octave() {
-            interval_class = IntervalClass::new(Quality::Perfect, IntervalSize::Unison).expect(
-                "Should never error creating a Perfect Unison. Something has gone very wrong.",
-            );
-            octaves += 1;
-        }
-        Self {
-            interval_class: interval_class.quarter_sharp(),
-            octaves,
-            ..*self
-        }
+        self.apply_quartertone(|ic| ic.quarter_sharp())
     }
 
     pub fn quarter_flat(&self) -> Self {
+        self.apply_quartertone(|ic| ic.quarter_flat())
+    }
+
+    fn apply_quartertone(&self, interval_class_fn: fn(IntervalClass) -> IntervalClass) -> Self {
         let mut interval_class = self.interval_class;
         let mut octaves = self.octaves;
         if self.interval_class.is_perfect_octave() {
@@ -84,8 +71,9 @@ impl Interval {
             );
             octaves += 1;
         }
+        interval_class = interval_class_fn(interval_class);
         Self {
-            interval_class: interval_class.quarter_flat(),
+            interval_class,
             octaves,
             ..*self
         }
@@ -128,24 +116,23 @@ impl fmt::Display for Interval {
     }
 }
 
-fn calculate_octaves(quality: Quality, size: i32) -> (i32, i32, i32) {
-    let (normal_size, mut octaves) = normalize_size_with_octaves(size.abs(), 0);
-    let mut final_size = normal_size;
-    let sign = if size > 0 { 1 } else { -1 };
-
-    if is_perfect_octave_or_octaves(normal_size, size, quality) {
+fn calculate_octaves(quality: Quality, size: u32) -> (u32, i32) {
+    let (normal_size, mut octaves) = normalize_size_with_octaves(size, 0);
+    let final_size = if is_perfect_octave_or_octaves(normal_size, size, quality) {
         octaves -= 1;
-        final_size = 8;
-    }
+        8
+    } else {
+        normal_size
+    };
 
-    (sign, final_size, octaves)
+    (final_size, octaves)
 }
 
-fn is_perfect_octave_or_octaves(normal_size: i32, size: i32, quality: Quality) -> bool {
+fn is_perfect_octave_or_octaves(normal_size: u32, size: u32, quality: Quality) -> bool {
     normal_size == 1 && size >= 8 && quality == Quality::Perfect
 }
 
-fn normalize_size_with_octaves(size: i32, octaves: i32) -> (i32, i32) {
+fn normalize_size_with_octaves(size: u32, octaves: i32) -> (u32, i32) {
     if size > 7 {
         normalize_size_with_octaves(size - 7, octaves + 1)
     } else {

@@ -21,7 +21,7 @@ fn new() {
     assert_eq!(interval.octaves, 1);
     assert_eq!(interval.polarity, Some(Positive));
 
-    let interval = Interval::new(Major, -2);
+    let interval = -Interval::new(Major, 2);
     assert_eq!(interval.interval_class.quality, Major);
     assert_eq!(interval.interval_class.size, Second);
     assert_eq!(interval.interval_class.polarity, Some(Negative));

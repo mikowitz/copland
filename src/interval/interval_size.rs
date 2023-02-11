@@ -49,8 +49,8 @@ impl fmt::Display for IntervalSize {
     }
 }
 
-impl From<i32> for IntervalSize {
-    fn from(value: i32) -> Self {
-        num::FromPrimitive::from_i32(value).map_or_else(|| todo!(), |size| size)
+impl From<u32> for IntervalSize {
+    fn from(value: u32) -> Self {
+        num::FromPrimitive::from_u32(value).map_or_else(|| todo!(), |size| size)
     }
 }
