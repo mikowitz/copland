@@ -16,18 +16,18 @@ mod octave;
 pub use octave::Octave;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Pitch {
-    pitch_class: PitchClass,
     octave: Octave,
+    pitch_class: PitchClass,
 }
 
 impl Pitch {
     pub const fn new(pitch_class: PitchClass, octave: i32) -> Self {
         let octave = Octave::new(octave);
         Self {
-            pitch_class,
             octave,
+            pitch_class,
         }
     }
 

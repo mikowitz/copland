@@ -2,7 +2,7 @@ use super::{Accidental, DiatonicPitchClass};
 use std::fmt;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PitchClass {
     diatonic_pitch_class: DiatonicPitchClass,
     accidental: Accidental,

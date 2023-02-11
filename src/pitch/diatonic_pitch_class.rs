@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DiatonicPitchClass {
     #[default]
     C = 0,
