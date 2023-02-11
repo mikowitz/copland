@@ -21,7 +21,7 @@ use std::ops::Neg;
 type Octaves = i32;
 
 #[must_use]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct Interval {
     interval_class: IntervalClass,
     octaves: Octaves,
@@ -29,12 +29,16 @@ pub struct Interval {
 }
 
 impl Interval {
-    pub fn new(quality: Quality, size: u32) -> Self {
+    // This is here because you (I, at least) can't use `Result.expect` in
+    // const functions, so need to cast to Option first
+    #[allow(clippy::ok_expect)]
+    pub const fn new(quality: Quality, size: u32) -> Self {
         let (interval_class_size, octaves) = calculate_octaves(quality, size);
 
         let interval_class =
-            IntervalClass::new(quality, IntervalSize::from(interval_class_size)).
-            expect("Should never error at this point, but got {quality} {interval_class_size} trying to create a new interval.");
+            IntervalClass::new(quality, IntervalSize::from_u32(interval_class_size))
+                .ok()
+                .expect("Should never error at this point, but got {quality} {interval_class_size} trying to create a new interval.");
         let polarity = if interval_class.is_perfect_unison() {
             None
         } else {
@@ -116,7 +120,7 @@ impl fmt::Display for Interval {
     }
 }
 
-fn calculate_octaves(quality: Quality, size: u32) -> (u32, i32) {
+const fn calculate_octaves(quality: Quality, size: u32) -> (u32, i32) {
     let (normal_size, mut octaves) = normalize_size_with_octaves(size, 0);
     let final_size = if is_perfect_octave_or_octaves(normal_size, size, quality) {
         octaves -= 1;
@@ -128,11 +132,11 @@ fn calculate_octaves(quality: Quality, size: u32) -> (u32, i32) {
     (final_size, octaves)
 }
 
-fn is_perfect_octave_or_octaves(normal_size: u32, size: u32, quality: Quality) -> bool {
-    normal_size == 1 && size >= 8 && quality == Quality::Perfect
+const fn is_perfect_octave_or_octaves(normal_size: u32, size: u32, quality: Quality) -> bool {
+    normal_size == 1 && size >= 8 && quality.is_perfect()
 }
 
-fn normalize_size_with_octaves(size: u32, octaves: i32) -> (u32, i32) {
+const fn normalize_size_with_octaves(size: u32, octaves: i32) -> (u32, i32) {
     if size > 7 {
         normalize_size_with_octaves(size - 7, octaves + 1)
     } else {

@@ -4,7 +4,7 @@ use std::fmt;
 use std::ops::Neg;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct IntervalClass {
     pub size: IntervalSize,
     pub quality: Quality,
@@ -19,7 +19,7 @@ impl IntervalClass {
     ///
     /// Will return an error if given an invalid quality and interval size pair,
     /// for example, attempting to construct a Perfect Second.
-    pub fn new(quality: Quality, size: IntervalSize) -> Result<Self, Error> {
+    pub const fn new(quality: Quality, size: IntervalSize) -> Result<Self, Error> {
         if Self::valid_quality_and_size_pair(quality, size) {
             let (quality, size) = Self::correct_quality_and_size(quality, size);
             let polarity = match (quality, size) {
@@ -52,10 +52,8 @@ impl IntervalClass {
     }
 
     #[must_use]
-    pub fn is_perfect_unison(&self) -> bool {
-        self.size == IntervalSize::Unison
-            && self.quality == Quality::Perfect
-            && self.quartertone.is_none()
+    pub const fn is_perfect_unison(&self) -> bool {
+        self.size.is_unison() && self.quality.is_perfect() && self.quartertone.is_none()
     }
 
     #[must_use]
@@ -76,14 +74,14 @@ impl IntervalClass {
         }
     }
 
-    fn valid_quality_and_size_pair(quality: Quality, size: IntervalSize) -> bool {
+    const fn valid_quality_and_size_pair(quality: Quality, size: IntervalSize) -> bool {
         let perfect_interval = size.can_be_perfect();
         let major_minor_interval = !perfect_interval;
-        let major_minor_quality = [Quality::Major, Quality::Minor].contains(&quality);
+        let major_minor_quality = quality.is_major_or_minor();
         if perfect_interval && major_minor_quality {
             false
         } else {
-            !(major_minor_interval && quality == Quality::Perfect)
+            !(major_minor_interval && quality.is_perfect())
         }
     }
 

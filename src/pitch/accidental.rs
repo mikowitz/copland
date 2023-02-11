@@ -2,12 +2,13 @@ use crate::error::Error;
 use std::fmt;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Accidental {
     DoubleFlat,
     ThreeQuarterFlat,
     Flat,
     QuarterFlat,
+    #[default]
     Natural,
     QuarterSharp,
     Sharp,

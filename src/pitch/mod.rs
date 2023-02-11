@@ -12,33 +12,11 @@ pub use accidental::Accidental;
 mod diatonic_pitch_class;
 pub use diatonic_pitch_class::DiatonicPitchClass;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
-struct Octave {
-    octave: i32,
-}
-
-impl Octave {
-    #[allow(clippy::cast_precision_loss)]
-    fn as_float(self) -> f32 {
-        12. * (self.octave as f32 - 4.)
-    }
-}
-
-impl fmt::Display for Octave {
-    #[allow(clippy::cast_sign_loss)]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let o = match self.octave {
-            3 => String::new(),
-            o if o < 3 => ",".repeat((3 - o) as usize),
-            o if o > 3 => "'".repeat((o - 3) as usize),
-            _ => todo!(),
-        };
-        write!(f, "{o}")
-    }
-}
+mod octave;
+pub use octave::Octave;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Pitch {
     pitch_class: PitchClass,
     octave: Octave,
@@ -46,7 +24,7 @@ pub struct Pitch {
 
 impl Pitch {
     pub const fn new(pitch_class: PitchClass, octave: i32) -> Self {
-        let octave = Octave { octave };
+        let octave = Octave::new(octave);
         Self {
             pitch_class,
             octave,

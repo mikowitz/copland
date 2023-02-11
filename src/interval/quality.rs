@@ -1,8 +1,9 @@
 use super::IntervalSize;
 use std::fmt;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Quality {
+    #[default]
     Perfect,
     Major,
     Minor,
@@ -27,6 +28,16 @@ impl Quality {
             }
             Self::Augmented(i) => 1. * i as f32,
         }
+    }
+
+    #[must_use]
+    pub const fn is_perfect(self) -> bool {
+        matches!(self, Self::Perfect)
+    }
+
+    #[must_use]
+    pub const fn is_major_or_minor(self) -> bool {
+        matches!(self, Self::Major | Self::Minor)
     }
 }
 
