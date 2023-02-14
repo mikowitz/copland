@@ -1,5 +1,7 @@
 use super::Chord;
 use crate::duration::Duration;
+use crate::interval::{Interval, Quality};
+use crate::leaf::Leaf;
 use crate::pitch::*;
 use crate::to_lilypond::ToLilypond;
 
@@ -18,6 +20,10 @@ fn c_major() -> Vec<Pitch> {
             4,
         ),
     ]
+}
+
+fn chord() -> Chord {
+    Chord::new(&c_major(), Duration::new(1, 4))
 }
 
 #[test]
@@ -79,4 +85,31 @@ fn to_lilypond() {
   g'
 >4"
     );
+}
+
+#[test]
+fn to_rest() {
+    assert_eq!(chord().to_rest().to_lilypond().unwrap(), "r4");
+}
+
+#[test]
+fn to_spacer() {
+    assert_eq!(chord().to_spacer().to_lilypond().unwrap(), "s4");
+}
+
+#[test]
+fn to_chord() {
+    assert_eq!(chord().to_chord(), chord());
+}
+
+#[test]
+fn to_note() {
+    assert_eq!(chord().to_note().to_lilypond().unwrap(), "c'4");
+}
+
+#[test]
+fn transpose() {
+    let mut chord = chord();
+    chord.transpose(Interval::new(Quality::Major, 3));
+    assert_eq!(chord.to_lilypond().unwrap(), "<\n  e'\n  gs'\n  b'\n>4");
 }
