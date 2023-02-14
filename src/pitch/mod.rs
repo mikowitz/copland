@@ -116,5 +116,10 @@ impl fmt::Display for Pitch {
     }
 }
 
+pub const C4: Pitch = Pitch::new(
+    PitchClass::new(DiatonicPitchClass::C, Accidental::Natural),
+    4,
+);
+
 #[cfg(test)]
 mod tests;

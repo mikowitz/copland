@@ -1,3 +1,4 @@
+use crate::interval::Interval;
 use crate::pitch::Pitch;
 use crate::to_lilypond::ToLilypond;
 
@@ -5,7 +6,7 @@ mod accidental_display;
 pub use accidental_display::AccidentalDisplay;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Notehead {
     written_pitch: Pitch,
     accidental_display: Option<AccidentalDisplay>,
@@ -17,6 +18,10 @@ impl Notehead {
             written_pitch,
             accidental_display: None,
         }
+    }
+
+    pub fn transpose(&mut self, interval: Interval) {
+        self.written_pitch = self.written_pitch().transpose(interval);
     }
 
     pub const fn forced(self) -> Self {
@@ -56,8 +61,11 @@ impl ToLilypond for Notehead {
 
 #[cfg(test)]
 mod tests {
-    use crate::pitch::*;
     use crate::to_lilypond::ToLilypond;
+    use crate::{
+        interval::{Interval, Quality},
+        pitch::*,
+    };
 
     use super::Notehead;
 
@@ -79,5 +87,19 @@ mod tests {
 
         let notehead3 = notehead2.neutral();
         assert_eq!(notehead3.to_lilypond().unwrap(), "c'");
+    }
+
+    #[test]
+    fn transpose() {
+        let pitch = Pitch::new(
+            PitchClass::new(DiatonicPitchClass::C, Accidental::Natural),
+            4,
+        );
+
+        let mut notehead = Notehead::new(pitch);
+
+        notehead.transpose(Interval::new(Quality::Perfect, 4));
+
+        assert_eq!(notehead.to_lilypond().unwrap(), "f'");
     }
 }
