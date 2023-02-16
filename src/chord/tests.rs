@@ -23,28 +23,27 @@ fn c_major() -> Vec<Pitch> {
 }
 
 fn chord() -> Chord {
-    Chord::new(&c_major(), Duration::new(1, 4))
+    Chord::new(&c_major(), Duration::new(1, 4)).unwrap()
 }
 
 #[test]
 fn written_pitches() {
     let pitches = c_major();
-    let chord = Chord::new(&pitches, Duration::new(1, 4));
 
-    assert_eq!(chord.written_pitches(), pitches);
+    assert_eq!(chord().written_pitches(), pitches);
 }
 
 #[test]
 fn insert_pitch() {
-    let mut chord = Chord::new(&c_major(), Duration::new(1, 4));
+    let mut ch = chord();
 
-    chord.insert(Pitch::new(
+    ch.insert(Pitch::new(
         PitchClass::new(DiatonicPitchClass::B, Accidental::Flat),
         3,
     ));
 
     assert_eq!(
-        chord.to_lilypond().unwrap(),
+        ch.to_lilypond().unwrap(),
         "<
   bf
   c'
@@ -53,15 +52,15 @@ fn insert_pitch() {
 >4"
     );
 
-    let mut chord = Chord::new(&c_major(), Duration::new(1, 4));
+    let mut ch = chord();
 
-    chord.insert(Pitch::new(
+    ch.insert(Pitch::new(
         PitchClass::new(DiatonicPitchClass::B, Accidental::Flat),
         4,
     ));
 
     assert_eq!(
-        chord.to_lilypond().unwrap(),
+        ch.to_lilypond().unwrap(),
         "<
   c'
   e'
@@ -73,12 +72,8 @@ fn insert_pitch() {
 
 #[test]
 fn to_lilypond() {
-    let pitches = c_major();
-
-    let chord = Chord::new(&pitches, Duration::new(1, 4));
-
     assert_eq!(
-        chord.to_lilypond().unwrap(),
+        chord().to_lilypond().unwrap(),
         "<
   c'
   e'

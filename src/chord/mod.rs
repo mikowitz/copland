@@ -1,6 +1,7 @@
 use itertools::Itertools;
 
 use crate::duration::Duration;
+use crate::error::Error;
 use crate::interval::Interval;
 use crate::leaf::Leaf;
 use crate::notehead::Notehead;
@@ -17,11 +18,21 @@ pub struct Chord {
 }
 
 impl Chord {
-    pub fn new(pitches: &[Pitch], written_duration: Duration) -> Self {
-        let noteheads = Self::pitches_to_notehead_list(pitches);
-        Self {
-            noteheads,
-            written_duration,
+    /// Returns a new `Chord` from the given list of `Pitch`es and `Duration`
+    ///
+    /// # Errors
+    ///
+    /// Returns an `UnprintableDuration` error if the given `Duration` cannot be rendered by a
+    /// single notehead in a score.
+    pub fn new(pitches: &[Pitch], written_duration: Duration) -> Result<Self, Error> {
+        if written_duration.is_printable() {
+            let noteheads = Self::pitches_to_notehead_list(pitches);
+            Ok(Self {
+                noteheads,
+                written_duration,
+            })
+        } else {
+            Err(Error::UnprintableDuration(written_duration))
         }
     }
 
@@ -59,15 +70,15 @@ impl Leaf for Chord {
     }
 
     fn to_note(&self) -> Self::Note {
-        crate::note::Note::new(self.written_pitches()[0], self.written_duration)
+        crate::note::Note::new(self.written_pitches()[0], self.written_duration).unwrap()
     }
 
     fn to_rest(&self) -> Self::Rest {
-        crate::rest::Rest::new(self.written_duration)
+        crate::rest::Rest::new(self.written_duration).unwrap()
     }
 
     fn to_spacer(&self) -> Self::Spacer {
-        crate::spacer::Spacer::new(self.written_duration)
+        crate::spacer::Spacer::new(self.written_duration).unwrap()
     }
 
     fn to_chord(&self) -> Self::Chord {

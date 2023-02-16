@@ -1,4 +1,5 @@
 use crate::duration::Duration;
+use crate::error::Error;
 use crate::leaf::Leaf;
 use crate::to_lilypond::ToLilypond;
 
@@ -9,8 +10,18 @@ pub struct Rest {
 }
 
 impl Rest {
-    pub const fn new(written_duration: Duration) -> Self {
-        Self { written_duration }
+    /// Returns a new `Spacer` from the given `Duration`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `UnprintableDuration` error if the given `Duration` cannot be rendered by a
+    /// single notehead in a score.
+    pub fn new(written_duration: Duration) -> Result<Self, Error> {
+        if written_duration.is_printable() {
+            Ok(Self { written_duration })
+        } else {
+            Err(Error::UnprintableDuration(written_duration))
+        }
     }
 }
 
@@ -20,7 +31,7 @@ impl Leaf for Rest {
     }
 
     fn to_note(&self) -> Self::Note {
-        crate::note::Note::new(crate::pitch::C4, self.written_duration)
+        crate::note::Note::new(crate::pitch::C4, self.written_duration).unwrap()
     }
 
     fn to_rest(&self) -> Self::Rest {
@@ -28,11 +39,11 @@ impl Leaf for Rest {
     }
 
     fn to_chord(&self) -> Self::Chord {
-        crate::chord::Chord::new(&[crate::pitch::C4], self.written_duration)
+        crate::chord::Chord::new(&[crate::pitch::C4], self.written_duration).unwrap()
     }
 
     fn to_spacer(&self) -> Self::Spacer {
-        crate::spacer::Spacer::new(self.written_duration)
+        crate::spacer::Spacer::new(self.written_duration).unwrap()
     }
 }
 
@@ -51,14 +62,12 @@ mod tests {
     use crate::duration::Duration;
 
     fn rest() -> Rest {
-        Rest::new(Duration::new(3, 4))
+        Rest::new(Duration::new(3, 4)).unwrap()
     }
 
     #[test]
     fn to_lilypond() {
-        let rest = Rest::new(Duration::new(3, 4));
-
-        assert_eq!(rest.to_lilypond().unwrap(), "r2.");
+        assert_eq!(rest().to_lilypond().unwrap(), "r2.");
     }
 
     #[test]

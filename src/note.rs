@@ -1,4 +1,5 @@
 use crate::duration::Duration;
+use crate::error::Error;
 use crate::interval::Interval;
 use crate::leaf::Leaf;
 use crate::notehead::Notehead;
@@ -13,11 +14,21 @@ pub struct Note {
 }
 
 impl Note {
-    pub const fn new(written_pitch: Pitch, written_duration: Duration) -> Self {
-        let notehead = Notehead::new(written_pitch);
-        Self {
-            notehead,
-            written_duration,
+    /// Returns a new `Note` from the given `Pitch` and `Duration`
+    ///
+    /// # Errors
+    ///
+    /// Returns an `UnprintableDuration` error if the given `Duration` cannot be rendered by a
+    /// single notehead in a score.
+    pub fn new(written_pitch: Pitch, written_duration: Duration) -> Result<Self, Error> {
+        if written_duration.is_printable() {
+            let notehead = Notehead::new(written_pitch);
+            Ok(Self {
+                notehead,
+                written_duration,
+            })
+        } else {
+            Err(Error::UnprintableDuration(written_duration))
         }
     }
 
@@ -40,27 +51,25 @@ impl Leaf for Note {
     }
 
     fn to_rest(&self) -> Self::Rest {
-        Self::Rest::new(self.written_duration)
+        Self::Rest::new(self.written_duration).unwrap()
     }
 
     fn to_spacer(&self) -> Self::Spacer {
-        Self::Spacer::new(self.written_duration)
+        Self::Spacer::new(self.written_duration).unwrap()
     }
 
     fn to_chord(&self) -> Self::Chord {
-        Self::Chord::new(&[self.written_pitch()], self.written_duration)
+        Self::Chord::new(&[self.written_pitch()], self.written_duration).unwrap()
     }
 }
 
 impl ToLilypond for Note {
     fn to_lilypond(&self) -> Result<String, crate::error::Error> {
-        match self.written_duration.to_lilypond() {
-            Ok(duration_lilypond) => Ok(format!(
-                "{}{duration_lilypond}",
-                self.notehead.to_lilypond().unwrap(),
-            )),
-            Err(err) => Err(err),
-        }
+        Ok(format!(
+            "{}{}",
+            self.notehead.to_lilypond().unwrap(),
+            self.written_duration.to_lilypond().unwrap()
+        ))
     }
 }
 
@@ -75,6 +84,12 @@ mod tests {
             Pitch::new(PitchClass::new(DiatonicPitchClass::E, Accidental::Flat), 2),
             Duration::new(1, 8),
         )
+        .unwrap()
+    }
+
+    #[test]
+    fn new() {
+        assert!(Note::new(note().written_pitch(), Duration::new(1, 5)).is_err());
     }
 
     #[test]

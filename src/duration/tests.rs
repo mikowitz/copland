@@ -262,13 +262,13 @@ fn to_lilypond() {
 #[test]
 fn to_lilypond_for_unprintable_durations() {
     let mut d = Duration::new(23, 1);
-    assert_eq!(d.to_lilypond(), Err(Error::UnprintableDuration(23, 1)));
+    assert_eq!(d.to_lilypond(), Err(Error::UnprintableDuration(d)));
 
     d = Duration::new(5, 8);
-    assert_eq!(d.to_lilypond(), Err(Error::UnprintableDuration(5, 8)));
+    assert_eq!(d.to_lilypond(), Err(Error::UnprintableDuration(d)));
 
     d = Duration::new(1, 5);
-    assert_eq!(d.to_lilypond(), Err(Error::UnprintableDuration(1, 5)));
+    assert_eq!(d.to_lilypond(), Err(Error::UnprintableDuration(d)));
 }
 
 #[test]
