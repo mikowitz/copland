@@ -18,6 +18,16 @@ impl Duration {
     }
 
     #[must_use]
+    pub const fn numerator(self) -> i32 {
+        self.numerator
+    }
+
+    #[must_use]
+    pub const fn denominator(self) -> i32 {
+        self.denominator
+    }
+
+    #[must_use]
     pub const fn as_tuple(self) -> (i32, i32) {
         (self.numerator, self.denominator)
     }

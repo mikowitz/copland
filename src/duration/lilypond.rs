@@ -36,7 +36,7 @@ impl ToLilypond for Duration {
         if self.is_printable() {
             Ok(format!("{}{}", base_duration_string(*self), dots(*self)))
         } else {
-            Err(Error::UnprintableDuration(self.numerator, self.denominator))
+            Err(Error::UnprintableDuration(*self))
         }
     }
 }
