@@ -26,7 +26,8 @@ impl Chord {
     /// single notehead in a score.
     pub fn new(pitches: &[Pitch], written_duration: Duration) -> Result<Self, Error> {
         if written_duration.is_printable() {
-            let noteheads = Self::pitches_to_notehead_list(pitches);
+            let mut noteheads = Self::pitches_to_notehead_list(pitches);
+            noteheads.sort();
             Ok(Self {
                 noteheads,
                 written_duration,
