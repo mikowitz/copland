@@ -1,3 +1,6 @@
+use itertools::Itertools;
+
+use crate::container::Containable;
 use crate::error::Error;
 
 pub trait ToLilypond {
@@ -18,4 +21,35 @@ pub trait ToLilypond {
     {
         panic!("make sure you've implemented ToLilypond for {self:?}");
     }
+}
+
+#[must_use]
+/// Formats a vector of container contents as Lilypond
+///
+/// # Panics
+///
+/// Will panic if any of the contents cannot be properly formatted as Lilypond
+pub fn format_contents(contents: &[Containable]) -> String {
+    indent(&contents.iter().map(|c| c.to_lilypond().unwrap()).join("\n"))
+}
+
+#[must_use]
+pub fn delimiters(simultaneous: bool) -> (String, String) {
+    if simultaneous {
+        ("<<".to_string(), ">>".to_string())
+    } else {
+        ("{".to_string(), "}".to_string())
+    }
+}
+
+#[must_use]
+pub fn context_signature(name: &Option<String>, context_type: &str) -> String {
+    name.as_ref().map_or_else(
+        || format!("\\new {context_type}"),
+        |name| format!("\\context {context_type} = \"{name}\""),
+    )
+}
+
+fn indent(s: &str) -> String {
+    s.lines().map(|s| format!("  {s}")).join("\n")
 }
