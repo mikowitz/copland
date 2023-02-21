@@ -1,5 +1,6 @@
 use crate::container::Containable;
-use crate::to_lilypond::{context_signature, delimiters, format_contents, ToLilypond};
+use crate::lilypond::{context_signature, delimiters, format_contents, ToLilypond};
+use crate::error::Error;
 
 #[derive(Debug)]
 pub struct StaffGroup {
@@ -22,10 +23,7 @@ impl StaffGroup {
 }
 
 impl ToLilypond for StaffGroup {
-    fn to_lilypond(&self) -> Result<String, crate::error::Error>
-    where
-        Self: std::fmt::Debug,
-    {
+    fn to_lilypond(&self) -> Result<String, Error> {
         // staff groups are always simultaneous
         let (open, close) = delimiters(true);
         Ok(format!(

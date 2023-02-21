@@ -29,15 +29,11 @@ pub struct Interval {
 }
 
 impl Interval {
-    // This is here because you (I, at least) can't use `Result.expect` in
-    // const functions, so need to cast to Option first
-    #[allow(clippy::ok_expect)]
-    pub const fn new(quality: Quality, size: u32) -> Self {
+    pub fn new(quality: Quality, size: u32) -> Self {
         let (interval_class_size, octaves) = calculate_octaves(quality, size);
 
         let interval_class =
             IntervalClass::new(quality, IntervalSize::from_u32(interval_class_size))
-                .ok()
                 .expect("Should never error at this point, but got {quality} {interval_class_size} trying to create a new interval.");
         let polarity = if interval_class.is_perfect_unison() {
             None

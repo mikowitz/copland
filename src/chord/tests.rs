@@ -2,8 +2,8 @@ use super::Chord;
 use crate::duration::Duration;
 use crate::interval::{Interval, Quality};
 use crate::leaf::Leaf;
+use crate::lilypond::ToLilypond;
 use crate::pitch::*;
-use crate::to_lilypond::ToLilypond;
 
 fn c_major() -> Vec<Pitch> {
     vec![

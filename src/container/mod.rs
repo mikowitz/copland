@@ -1,7 +1,8 @@
 mod containable;
 pub use containable::Containable;
+use crate::error::Error;
 
-use crate::to_lilypond::{format_contents, ToLilypond};
+use crate::lilypond::{format_contents, ToLilypond};
 
 #[derive(Debug)]
 pub struct Container {
@@ -16,10 +17,7 @@ impl Container {
 }
 
 impl ToLilypond for Container {
-    fn to_lilypond(&self) -> Result<String, crate::error::Error>
-    where
-        Self: std::fmt::Debug,
-    {
+    fn to_lilypond(&self) -> Result<String, Error> {
         Ok(format!("{{\n{}\n}}", format_contents(&self.contents)))
     }
 }

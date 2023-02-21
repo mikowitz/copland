@@ -2,9 +2,9 @@ use crate::duration::Duration;
 use crate::error::Error;
 use crate::interval::Interval;
 use crate::leaf::Leaf;
+use crate::lilypond::ToLilypond;
 use crate::notehead::Notehead;
 use crate::pitch::Pitch;
-use crate::to_lilypond::ToLilypond;
 
 #[must_use]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

@@ -1,5 +1,6 @@
 use crate::container::Containable;
-use crate::to_lilypond::{context_signature, delimiters, format_contents, ToLilypond};
+use crate::error::Error;
+use crate::lilypond::{context_signature, delimiters, format_contents, ToLilypond};
 
 #[derive(Debug)]
 pub struct Staff {
@@ -28,10 +29,7 @@ impl Staff {
 }
 
 impl ToLilypond for Staff {
-    fn to_lilypond(&self) -> Result<String, crate::error::Error>
-    where
-        Self: std::fmt::Debug,
-    {
+    fn to_lilypond(&self) -> Result<String, Error> {
         let (open, close) = delimiters(self.simultaneous);
         Ok(format!(
             "{} {open}\n{}\n{close}",
