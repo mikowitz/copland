@@ -1,7 +1,7 @@
 use crate::duration::Duration;
 use crate::error::Error;
 use crate::leaf::Leaf;
-use crate::to_lilypond::ToLilypond;
+use crate::lilypond::ToLilypond;
 
 #[must_use]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -48,7 +48,7 @@ impl Leaf for Spacer {
 }
 
 impl ToLilypond for Spacer {
-    fn to_lilypond(&self) -> Result<String, crate::error::Error> {
+    fn to_lilypond(&self) -> Result<String, Error> {
         match self.written_duration.to_lilypond() {
             Ok(duration_lilypond) => Ok(format!("s{duration_lilypond}")),
             Err(err) => Err(err),

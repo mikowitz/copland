@@ -1,6 +1,6 @@
 use crate::interval::Interval;
+use crate::lilypond::ToLilypond;
 use crate::pitch::Pitch;
-use crate::to_lilypond::ToLilypond;
 
 mod accidental_display;
 pub use accidental_display::AccidentalDisplay;
@@ -61,7 +61,7 @@ impl ToLilypond for Notehead {
 
 #[cfg(test)]
 mod tests {
-    use crate::to_lilypond::ToLilypond;
+    use crate::lilypond::ToLilypond;
     use crate::{
         interval::{Interval, Quality},
         pitch::*,

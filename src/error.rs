@@ -10,6 +10,14 @@ pub enum Error {
     InvalidIntervalClass(Quality, IntervalSize),
     #[error("cannot create accidental from {0}")]
     InvalidAccidentalSize(f32),
+    #[error("std::io::Error: {0}")]
+    IOError(String),
     #[error("unhandled generic error")]
     GenericError,
+}
+
+impl From<std::io::Error> for Error {
+    fn from(value: std::io::Error) -> Self {
+        Self::IOError(value.to_string())
+    }
 }

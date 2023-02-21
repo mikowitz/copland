@@ -1,10 +1,11 @@
 use crate::chord::Chord;
 use crate::container::Container;
+use crate::error::Error;
+use crate::lilypond::ToLilypond;
 use crate::note::Note;
 use crate::rest::Rest;
-use crate::score::{Score, Staff, StaffGroup, Voice};
+use crate::score::{RhythmicStaff, Score, Staff, StaffGroup, Voice};
 use crate::spacer::Spacer;
-use crate::to_lilypond::ToLilypond;
 use crate::tuplet::Tuplet;
 
 macro_rules! containable {
@@ -19,9 +20,7 @@ macro_rules! containable {
         }
 
         impl ToLilypond for Containable {
-            fn to_lilypond(&self) -> Result<String, crate::error::Error>
-            where
-                Self: std::fmt::Debug,
+            fn to_lilypond(&self) -> Result<String, Error>
             {
                 match self {
                     $(
@@ -41,4 +40,16 @@ macro_rules! containable {
     }
 }
 
-containable!(Chord, Note, Rest, Spacer, Container, Tuplet, Voice, Staff, StaffGroup, Score);
+containable!(
+    Chord,
+    Note,
+    Rest,
+    Spacer,
+    Container,
+    Tuplet,
+    Voice,
+    RhythmicStaff,
+    Staff,
+    StaffGroup,
+    Score
+);

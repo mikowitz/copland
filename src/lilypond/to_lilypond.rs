@@ -15,12 +15,7 @@ pub trait ToLilypond {
     ///
     /// An unprintable duration is still useful pre-rendering for calculations,
     /// but will return an error if it is used in a printed note or rest.
-    fn to_lilypond(&self) -> Result<String, Error>
-    where
-        Self: std::fmt::Debug,
-    {
-        panic!("make sure you've implemented ToLilypond for {self:?}");
-    }
+    fn to_lilypond(&self) -> Result<String, Error>;
 }
 
 #[must_use]

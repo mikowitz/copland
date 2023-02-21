@@ -1,6 +1,6 @@
 use super::Duration;
 use crate::error::Error;
-use crate::to_lilypond::ToLilypond;
+use crate::lilypond::ToLilypond;
 
 #[allow(clippy::cast_possible_truncation)]
 fn dots_count(duration: Duration) -> u32 {

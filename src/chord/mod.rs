@@ -4,9 +4,9 @@ use crate::duration::Duration;
 use crate::error::Error;
 use crate::interval::Interval;
 use crate::leaf::Leaf;
+use crate::lilypond::ToLilypond;
 use crate::notehead::Notehead;
 use crate::pitch::Pitch;
-use crate::to_lilypond::ToLilypond;
 
 type NoteheadList = Vec<Notehead>;
 
@@ -88,7 +88,7 @@ impl Leaf for Chord {
 }
 
 impl ToLilypond for Chord {
-    fn to_lilypond(&self) -> Result<String, crate::error::Error> {
+    fn to_lilypond(&self) -> Result<String, Error> {
         match self.written_duration.to_lilypond() {
             Ok(duration_lilypond) => Ok(format!(
                 "<\n{}\n>{duration_lilypond}",

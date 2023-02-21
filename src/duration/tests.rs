@@ -3,7 +3,7 @@ mod regression_data_loaders;
 
 use super::Duration;
 use crate::error::Error;
-use crate::to_lilypond::ToLilypond;
+use crate::lilypond::ToLilypond;
 use itertools::Itertools;
 use regression_data_loaders::*;
 

@@ -15,13 +15,13 @@ pub mod duration;
 pub mod error;
 pub mod interval;
 pub mod leaf;
+pub mod lilypond;
 pub mod note;
 pub mod notehead;
 pub mod pitch;
 pub mod rest;
 pub mod score;
 pub mod spacer;
-pub mod to_lilypond;
 pub mod tuplet;
 
 pub mod prelude {
@@ -29,11 +29,12 @@ pub mod prelude {
     pub use crate::container;
     pub use crate::container::{Containable, Container};
     pub use crate::duration::Duration;
+    pub use crate::lilypond;
+    pub use crate::lilypond::{File, ToLilypond};
     pub use crate::note::Note;
     pub use crate::pitch::*;
     pub use crate::rest::Rest;
-    pub use crate::score::{Score, Staff, StaffGroup, Voice};
+    pub use crate::score::{RhythmicStaff, Score, Staff, StaffGroup, Voice};
     pub use crate::spacer::Spacer;
-    pub use crate::to_lilypond::ToLilypond;
     pub use crate::tuplet::{Multiplier, Tuplet};
 }

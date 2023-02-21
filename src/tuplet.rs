@@ -1,5 +1,6 @@
 use crate::container::Containable;
-use crate::to_lilypond::ToLilypond;
+use crate::error::Error;
+use crate::lilypond::ToLilypond;
 
 #[derive(Debug)]
 pub struct Multiplier(pub i32, pub i32);
@@ -21,15 +22,12 @@ impl Tuplet {
 }
 
 impl ToLilypond for Tuplet {
-    fn to_lilypond(&self) -> Result<String, crate::error::Error>
-    where
-        Self: std::fmt::Debug,
-    {
+    fn to_lilypond(&self) -> Result<String, Error> {
         Ok(format!(
             "\\tuplet {}/{} {{\n{}\n}}",
             self.multiplier.1,
             self.multiplier.0,
-            crate::to_lilypond::format_contents(&self.contents)
+            crate::lilypond::format_contents(&self.contents)
         ))
     }
 }

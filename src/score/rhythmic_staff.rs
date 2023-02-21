@@ -3,13 +3,13 @@ use crate::error::Error;
 use crate::lilypond::{context_signature, delimiters, format_contents, ToLilypond};
 
 #[derive(Debug)]
-pub struct Voice {
+pub struct RhythmicStaff {
     contents: Vec<Containable>,
     name: Option<String>,
     simultaneous: bool,
 }
 
-impl Voice {
+impl RhythmicStaff {
     #[must_use]
     pub fn new(contents: Vec<Containable>) -> Self {
         Self {
@@ -28,12 +28,12 @@ impl Voice {
     }
 }
 
-impl ToLilypond for Voice {
+impl ToLilypond for RhythmicStaff {
     fn to_lilypond(&self) -> Result<String, Error> {
         let (open, close) = delimiters(self.simultaneous);
         Ok(format!(
             "{} {open}\n{}\n{close}",
-            context_signature(&self.name, "Voice"),
+            context_signature(&self.name, "RhythmicStaff"),
             format_contents(&self.contents)
         ))
     }
@@ -45,37 +45,19 @@ mod tests {
 
     #[test]
     fn without_name() {
-        let voice = Voice::new(vec![Rest::new(Duration::new(1, 4)).unwrap().into()]);
-
-        assert_eq!(voice.contents.len(), 1);
-        assert_eq!(voice.name, None);
-        assert!(!voice.simultaneous);
-
-        assert_eq!(
-            voice.to_lilypond().unwrap(),
-            r#"
-\new Voice {
-  r4
-}
-        "#
-            .trim()
-        )
-    }
-
-    #[test]
-    fn with_name() {
         let mut voice = Voice::new(vec![Rest::new(Duration::new(1, 4)).unwrap().into()]);
         voice.set_name("Voice One");
+        voice.set_simultaneous(true);
 
-        assert_eq!(voice.contents.len(), 1);
-        assert_eq!(voice.name, Some("Voice One".to_string()));
-        assert!(!voice.simultaneous);
+        let staff = RhythmicStaff::new(vec![voice.into()]);
 
         assert_eq!(
-            voice.to_lilypond().unwrap(),
+            staff.to_lilypond().unwrap(),
             r#"
-\context Voice = "Voice One" {
-  r4
+\new RhythmicStaff {
+  \context Voice = "Voice One" <<
+    r4
+  >>
 }
         "#
             .trim()
@@ -86,17 +68,24 @@ mod tests {
     fn simultaneous() {
         let mut voice = Voice::new(vec![Rest::new(Duration::new(1, 4)).unwrap().into()]);
         voice.set_name("Voice One");
-        voice.set_simultaneous(true);
 
-        assert_eq!(voice.contents.len(), 1);
-        assert_eq!(voice.name, Some("Voice One".to_string()));
-        assert!(voice.simultaneous);
+        let mut voice2 = Voice::new(vec![Spacer::new(Duration::new(1, 4)).unwrap().into()]);
+        voice2.set_name("Voice Two");
+
+        let mut staff = RhythmicStaff::new(vec![voice.into(), voice2.into()]);
+        staff.set_name("RhythmicStaff One");
+        staff.set_simultaneous(true);
 
         assert_eq!(
-            voice.to_lilypond().unwrap(),
+            staff.to_lilypond().unwrap(),
             r#"
-\context Voice = "Voice One" <<
-  r4
+\context RhythmicStaff = "RhythmicStaff One" <<
+  \context Voice = "Voice One" {
+    r4
+  }
+  \context Voice = "Voice Two" {
+    s4
+  }
 >>
         "#
             .trim()
