@@ -1,9 +1,5 @@
 #![feature(const_option)]
 #![feature(const_result_drop)]
-#![feature(associated_type_defaults)]
-
-#[macro_use]
-extern crate num_derive;
 
 #[cfg(test)]
 #[macro_use]

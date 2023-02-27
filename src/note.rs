@@ -42,7 +42,7 @@ impl Note {
 }
 
 impl Leaf for Note {
-    fn written_duration(&self) -> Self::Duration {
+    fn written_duration(&self) -> crate::duration::Duration {
         self.written_duration
     }
 
@@ -50,16 +50,16 @@ impl Leaf for Note {
         *self
     }
 
-    fn to_rest(&self) -> Self::Rest {
-        Self::Rest::new(self.written_duration).unwrap()
+    fn to_rest(&self) -> crate::rest::Rest {
+        crate::rest::Rest::new(self.written_duration).unwrap()
     }
 
-    fn to_spacer(&self) -> Self::Spacer {
-        Self::Spacer::new(self.written_duration).unwrap()
+    fn to_spacer(&self) -> crate::spacer::Spacer {
+        crate::spacer::Spacer::new(self.written_duration).unwrap()
     }
 
-    fn to_chord(&self) -> Self::Chord {
-        Self::Chord::new(&[self.written_pitch()], self.written_duration).unwrap()
+    fn to_chord(&self) -> crate::chord::Chord {
+        crate::chord::Chord::new(&[self.written_pitch()], self.written_duration).unwrap()
     }
 }
 
