@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, FromPrimitive)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum IntervalSize {
     #[default]
     Unison = 1,

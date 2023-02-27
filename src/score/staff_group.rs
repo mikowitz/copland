@@ -1,8 +1,8 @@
 use crate::container::Containable;
-use crate::lilypond::{context_signature, delimiters, format_contents, ToLilypond};
 use crate::error::Error;
+use crate::lilypond::{context_signature, delimiters, format_contents, ToLilypond};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct StaffGroup {
     contents: Vec<Containable>,
     name: Option<String>,
@@ -15,6 +15,11 @@ impl StaffGroup {
             contents,
             name: None,
         }
+    }
+
+    #[must_use]
+    pub fn contents(&self) -> &[Containable] {
+        &self.contents
     }
 
     pub fn set_name(&mut self, name: &str) {

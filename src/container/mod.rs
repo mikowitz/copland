@@ -1,10 +1,10 @@
 mod containable;
-pub use containable::Containable;
 use crate::error::Error;
+pub use containable::Containable;
 
 use crate::lilypond::{format_contents, ToLilypond};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Container {
     contents: Vec<Containable>,
 }
@@ -13,6 +13,11 @@ impl Container {
     #[must_use]
     pub fn new(contents: Vec<Containable>) -> Self {
         Self { contents }
+    }
+
+    #[must_use]
+    pub fn contents(&self) -> &[Containable] {
+        &self.contents
     }
 }
 

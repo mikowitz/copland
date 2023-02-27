@@ -2,7 +2,7 @@ use crate::container::Containable;
 use crate::error::Error;
 use crate::lilypond::{context_signature, delimiters, format_contents, ToLilypond};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Staff {
     contents: Vec<Containable>,
     name: Option<String>,
@@ -17,6 +17,11 @@ impl Staff {
             simultaneous: false,
             name: None,
         }
+    }
+
+    #[must_use]
+    pub fn contents(&self) -> &[Containable] {
+        &self.contents
     }
 
     pub fn set_name(&mut self, name: &str) {

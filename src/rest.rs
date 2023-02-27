@@ -26,23 +26,23 @@ impl Rest {
 }
 
 impl Leaf for Rest {
-    fn written_duration(&self) -> Self::Duration {
+    fn written_duration(&self) -> crate::duration::Duration {
         self.written_duration
     }
 
-    fn to_note(&self) -> Self::Note {
+    fn to_note(&self) -> crate::note::Note {
         crate::note::Note::new(crate::pitch::C4, self.written_duration).unwrap()
     }
 
-    fn to_rest(&self) -> Self::Rest {
+    fn to_rest(&self) -> Self {
         *self
     }
 
-    fn to_chord(&self) -> Self::Chord {
+    fn to_chord(&self) -> crate::chord::Chord {
         crate::chord::Chord::new(&[crate::pitch::C4], self.written_duration).unwrap()
     }
 
-    fn to_spacer(&self) -> Self::Spacer {
+    fn to_spacer(&self) -> crate::spacer::Spacer {
         crate::spacer::Spacer::new(self.written_duration).unwrap()
     }
 }

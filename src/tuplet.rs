@@ -2,10 +2,10 @@ use crate::container::Containable;
 use crate::error::Error;
 use crate::lilypond::ToLilypond;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Multiplier(pub i32, pub i32);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Tuplet {
     multiplier: Multiplier,
     contents: Vec<Containable>,
@@ -18,6 +18,11 @@ impl Tuplet {
             multiplier,
             contents,
         }
+    }
+
+    #[must_use]
+    pub fn contents(&self) -> &[Containable] {
+        &self.contents
     }
 }
 

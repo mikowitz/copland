@@ -66,23 +66,23 @@ impl Chord {
 }
 
 impl Leaf for Chord {
-    fn written_duration(&self) -> Self::Duration {
+    fn written_duration(&self) -> crate::duration::Duration {
         self.written_duration
     }
 
-    fn to_note(&self) -> Self::Note {
+    fn to_note(&self) -> crate::note::Note {
         crate::note::Note::new(self.written_pitches()[0], self.written_duration).unwrap()
     }
 
-    fn to_rest(&self) -> Self::Rest {
+    fn to_rest(&self) -> crate::rest::Rest {
         crate::rest::Rest::new(self.written_duration).unwrap()
     }
 
-    fn to_spacer(&self) -> Self::Spacer {
+    fn to_spacer(&self) -> crate::spacer::Spacer {
         crate::spacer::Spacer::new(self.written_duration).unwrap()
     }
 
-    fn to_chord(&self) -> Self::Chord {
+    fn to_chord(&self) -> Self {
         self.clone()
     }
 }
