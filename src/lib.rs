@@ -13,6 +13,8 @@ pub mod chord;
 pub mod container;
 pub mod duration;
 pub mod error;
+pub mod fraction;
+pub mod generators;
 pub mod interval;
 pub mod leaf;
 pub mod lilypond;
@@ -29,6 +31,8 @@ pub mod prelude {
     pub use crate::container;
     pub use crate::container::{Containable, Container};
     pub use crate::duration::Duration;
+    pub use crate::fraction::Fraction;
+    pub use crate::generators;
     pub use crate::lilypond;
     pub use crate::lilypond::{File, ToLilypond};
     pub use crate::note::Note;
