@@ -5,6 +5,7 @@
 #[macro_use]
 pub mod regression_data_streamer;
 
+pub mod attachment;
 pub mod chord;
 pub mod container;
 pub mod duration;
@@ -21,6 +22,7 @@ pub mod spacer;
 pub mod tuplet;
 
 pub mod prelude {
+    pub use crate::attachment::{Attachable, Attachment};
     pub use crate::chord::Chord;
     pub use crate::container;
     pub use crate::container::{Containable, Container};
