@@ -85,7 +85,7 @@ impl Containable {
             Self::Tuplet(c) => c.contents().to_vec(),
             Self::RhythmicStaff(c) => c.contents().to_vec(),
             Self::Chord(c) => vec![c.clone().into()],
-            Self::Note(c) => vec![(*c).into()],
+            Self::Note(c) => vec![c.clone().into()],
             Self::Rest(c) => vec![(*c).into()],
             Self::Spacer(c) => vec![(*c).into()],
         }

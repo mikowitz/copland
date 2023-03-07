@@ -1,3 +1,4 @@
+use crate::attachment::Attachment;
 use crate::duration::Duration;
 use crate::error::Error;
 use crate::interval::Interval;
@@ -7,10 +8,11 @@ use crate::notehead::Notehead;
 use crate::pitch::Pitch;
 
 #[must_use]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Note {
     notehead: Notehead,
     written_duration: Duration,
+    attachments: Vec<Attachment>,
 }
 
 impl Note {
@@ -26,6 +28,7 @@ impl Note {
             Ok(Self {
                 notehead,
                 written_duration,
+                attachments: vec![],
             })
         } else {
             Err(Error::UnprintableDuration(written_duration))
@@ -39,6 +42,10 @@ impl Note {
     pub fn transpose(&mut self, interval: Interval) {
         self.notehead.transpose(interval);
     }
+
+    pub fn attach(&mut self, attachment: Attachment) {
+        self.attachments.push(attachment);
+    }
 }
 
 impl Leaf for Note {
@@ -47,7 +54,7 @@ impl Leaf for Note {
     }
 
     fn to_note(&self) -> Self {
-        *self
+        self.clone()
     }
 
     fn to_rest(&self) -> crate::rest::Rest {
@@ -76,6 +83,7 @@ impl ToLilypond for Note {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::attachment::*;
     use crate::duration::*;
     use crate::pitch::*;
 
@@ -125,5 +133,24 @@ mod tests {
             3,
         ));
         assert_eq!(note.to_lilypond().unwrap(), "g,8");
+    }
+
+    #[test]
+    fn attach() {
+        let mut note = note();
+        let tie = Attachment::new(Attachable::Tie);
+
+        note.attach(tie);
+
+        assert_eq!(note.attachments.len(), 1);
+
+        assert_eq!(
+            note.to_lilypond().unwrap(),
+            r#"
+ef,8
+  - ~
+        "#
+            .trim()
+        );
     }
 }
