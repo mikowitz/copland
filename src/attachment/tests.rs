@@ -28,3 +28,13 @@ fn reset_direction() {
     assert_eq!(attachment.attachable, Attachable::Tie);
     assert_eq!(attachment.direction, None);
 }
+
+#[test]
+fn prepared_components() {
+    let attachment = Attachment::new(Attachable::Tie);
+
+    assert_eq!(
+        attachment.prepared_components(),
+        (vec![], vec![String::from("- ~")])
+    );
+}

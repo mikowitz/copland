@@ -2,7 +2,7 @@ pub mod attachable;
 pub mod direction;
 pub mod position;
 
-pub use attachable::Attachable;
+pub use attachable::{Attachable, Components};
 pub use direction::Direction;
 pub use position::Position;
 
@@ -32,6 +32,29 @@ impl Attachment {
     pub fn reset_direction(&mut self) {
         let (direction, _, _) = Attachable::defaults(self.attachable);
         self.direction = direction;
+    }
+
+    pub fn prepared_components(&self) -> Components {
+        let (before, after) = self.attachable.components();
+        (
+            prepare_components(before, self.direction),
+            prepare_components(after, self.direction),
+        )
+    }
+}
+
+fn prepare_components(components: Vec<String>, direction: Option<Direction>) -> Vec<String> {
+    components
+        .iter()
+        .map(|c| with_direction(c, direction))
+        .collect()
+}
+
+fn with_direction(component: &str, direction: Option<Direction>) -> String {
+    match direction {
+        None => format!("- {component}"),
+        Some(Direction::Up) => format!("^ {component}"),
+        Some(Direction::Down) => format!("_ {component}"),
     }
 }
 

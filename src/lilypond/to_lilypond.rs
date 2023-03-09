@@ -1,7 +1,9 @@
 use itertools::Itertools;
 
+use crate::attachment::attachable::Components;
 use crate::container::Containable;
 use crate::error::Error;
+use crate::prelude::Attachment;
 
 pub trait ToLilypond {
     /// Returns an object formatted for Lilypond
@@ -45,6 +47,32 @@ pub fn context_signature(name: &Option<String>, context_type: &str) -> String {
     )
 }
 
-fn indent(s: &str) -> String {
+#[must_use]
+pub fn indent(s: &str) -> String {
     s.lines().map(|s| format!("  {s}")).join("\n")
+}
+
+#[must_use]
+pub fn attachments_to_lilypond(attachments: Vec<Attachment>) -> (String, String) {
+    let (before, after) = attachments
+        .iter()
+        .map(Attachment::prepared_components)
+        .fold((vec![], vec![]), fold_attachment_tuples);
+
+    (attachments_to_string(before), attachments_to_string(after))
+}
+
+fn fold_attachment_tuples(acc: Components, el: Components) -> Components {
+    let (mut before, mut after) = acc;
+    let (new_before, new_after) = el;
+    before.extend(new_before);
+    after.extend(new_after);
+
+    (before, after)
+}
+
+fn attachments_to_string(attachments: Vec<String>) -> String {
+    attachments
+        .iter()
+        .fold(String::from(""), |acc, el| format!("{acc}\n{el}"))
 }
