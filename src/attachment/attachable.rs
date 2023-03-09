@@ -8,12 +8,14 @@ pub enum Attachable {
 pub type Components = (Vec<String>, Vec<String>);
 
 impl Attachable {
-    pub fn defaults(self) -> (Option<Direction>, Option<Position>, i32) {
+    #[must_use]
+    pub const fn defaults(self) -> (Option<Direction>, Option<Position>, i32) {
         match self {
             Self::Tie => (None, None, 0),
         }
     }
 
+    #[must_use]
     pub fn components(self) -> Components {
         match self {
             Self::Tie => tie_components(),

@@ -15,7 +15,8 @@ pub struct Attachment {
 }
 
 impl Attachment {
-    pub fn new(attachable: Attachable) -> Self {
+    #[must_use]
+    pub const fn new(attachable: Attachable) -> Self {
         let (direction, position, priority) = Attachable::defaults(attachable);
         Self {
             attachable,
@@ -34,16 +35,17 @@ impl Attachment {
         self.direction = direction;
     }
 
+    #[must_use]
     pub fn prepared_components(&self) -> Components {
         let (before, after) = self.attachable.components();
         (
-            prepare_components(before, self.direction),
-            prepare_components(after, self.direction),
+            prepare_components(&before, self.direction),
+            prepare_components(&after, self.direction),
         )
     }
 }
 
-fn prepare_components(components: Vec<String>, direction: Option<Direction>) -> Vec<String> {
+fn prepare_components(components: &[String], direction: Option<Direction>) -> Vec<String> {
     components
         .iter()
         .map(|c| with_direction(c, direction))

@@ -53,13 +53,16 @@ pub fn indent(s: &str) -> String {
 }
 
 #[must_use]
-pub fn attachments_to_lilypond(attachments: Vec<Attachment>) -> (String, String) {
+pub fn prepare_attachments(attachments: &[Attachment]) -> (String, String) {
     let (before, after) = attachments
         .iter()
         .map(Attachment::prepared_components)
         .fold((vec![], vec![]), fold_attachment_tuples);
 
-    (attachments_to_string(before), attachments_to_string(after))
+    (
+        attachments_to_string(&before),
+        attachments_to_string(&after),
+    )
 }
 
 fn fold_attachment_tuples(acc: Components, el: Components) -> Components {
@@ -71,8 +74,8 @@ fn fold_attachment_tuples(acc: Components, el: Components) -> Components {
     (before, after)
 }
 
-fn attachments_to_string(attachments: Vec<String>) -> String {
+fn attachments_to_string(attachments: &[String]) -> String {
     attachments
         .iter()
-        .fold(String::from(""), |acc, el| format!("{acc}\n{el}"))
+        .fold(String::new(), |acc, el| format!("{acc}\n{el}"))
 }

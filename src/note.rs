@@ -3,7 +3,7 @@ use crate::duration::Duration;
 use crate::error::Error;
 use crate::interval::Interval;
 use crate::leaf::Leaf;
-use crate::lilypond::{attachments_to_lilypond, indent, ToLilypond};
+use crate::lilypond::{indent, prepare_attachments, ToLilypond};
 use crate::notehead::Notehead;
 use crate::pitch::Pitch;
 
@@ -12,7 +12,7 @@ use crate::pitch::Pitch;
 pub struct Note {
     notehead: Notehead,
     written_duration: Duration,
-    pub attachments: Vec<Attachment>,
+    attachments: Vec<Attachment>,
 }
 
 impl Note {
@@ -72,7 +72,7 @@ impl Leaf for Note {
 
 impl ToLilypond for Note {
     fn to_lilypond(&self) -> Result<String, crate::error::Error> {
-        let (b, a) = attachments_to_lilypond(self.attachments.clone());
+        let (b, a) = prepare_attachments(&self.attachments);
         Ok(format!(
             "{}\n{}{}\n{}",
             b.trim(),
