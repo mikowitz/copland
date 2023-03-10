@@ -1,4 +1,5 @@
 use super::Chord;
+use crate::attachment::{ArpeggioStyle, Attachable, Attachment};
 use crate::duration::Duration;
 use crate::interval::{Interval, Quality};
 use crate::leaf::Leaf;
@@ -79,6 +80,26 @@ fn to_lilypond() {
   e'
   g'
 >4"
+    );
+}
+
+#[test]
+fn to_lilypond_with_attachment() {
+    let mut chord = chord();
+    let arpeggio = Attachment::new(Attachable::Arpeggio(ArpeggioStyle::Normal));
+    chord.attach(arpeggio);
+    assert_eq!(
+        chord.to_lilypond().unwrap(),
+        r#"
+\arpeggioNormal
+<
+  c'
+  e'
+  g'
+>4
+  \arpeggio
+        "#
+        .trim()
     );
 }
 

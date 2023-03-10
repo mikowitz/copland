@@ -57,7 +57,7 @@ pub fn prepare_attachments(attachments: &[Attachment]) -> (String, String) {
     let (before, after) = attachments
         .iter()
         .map(Attachment::prepared_components)
-        .fold((vec![], vec![]), fold_attachment_tuples);
+        .fold((vec![], vec![]), combine_attachment_tuples);
 
     (
         attachments_to_string(&before),
@@ -65,7 +65,7 @@ pub fn prepare_attachments(attachments: &[Attachment]) -> (String, String) {
     )
 }
 
-fn fold_attachment_tuples(acc: Components, el: Components) -> Components {
+fn combine_attachment_tuples(acc: Components, el: Components) -> Components {
     let (mut before, mut after) = acc;
     let (new_before, new_after) = el;
     before.extend(new_before);

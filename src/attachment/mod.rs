@@ -2,7 +2,7 @@ pub mod attachable;
 pub mod direction;
 pub mod position;
 
-pub use attachable::{Attachable, Components};
+pub use attachable::{ArpeggioStyle, Attachable, Components};
 pub use direction::Direction;
 pub use position::Position;
 
@@ -39,24 +39,29 @@ impl Attachment {
     pub fn prepared_components(&self) -> Components {
         let (before, after) = self.attachable.components();
         (
-            prepare_components(&before, self.direction),
-            prepare_components(&after, self.direction),
+            prepare_components(&before, self.direction, self.attachable.has_direction()),
+            prepare_components(&after, self.direction, self.attachable.has_direction()),
         )
     }
 }
 
-fn prepare_components(components: &[String], direction: Option<Direction>) -> Vec<String> {
+fn prepare_components(
+    components: &[String],
+    direction: Option<Direction>,
+    has_direction: bool,
+) -> Vec<String> {
     components
         .iter()
-        .map(|c| with_direction(c, direction))
+        .map(|c| with_direction(c, direction, has_direction))
         .collect()
 }
 
-fn with_direction(component: &str, direction: Option<Direction>) -> String {
-    match direction {
-        None => format!("- {component}"),
-        Some(Direction::Up) => format!("^ {component}"),
-        Some(Direction::Down) => format!("_ {component}"),
+fn with_direction(component: &str, direction: Option<Direction>, has_direction: bool) -> String {
+    match (has_direction, direction) {
+        (false, _) => component.to_string(),
+        (true, None) => format!("- {component}"),
+        (true, Some(Direction::Up)) => format!("^ {component}"),
+        (true, Some(Direction::Down)) => format!("_ {component}"),
     }
 }
 

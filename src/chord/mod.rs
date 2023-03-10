@@ -4,9 +4,10 @@ use crate::duration::Duration;
 use crate::error::Error;
 use crate::interval::Interval;
 use crate::leaf::Leaf;
-use crate::lilypond::ToLilypond;
+use crate::lilypond::{indent, prepare_attachments, ToLilypond};
 use crate::notehead::Notehead;
 use crate::pitch::Pitch;
+use crate::prelude::Attachment;
 
 type NoteheadList = Vec<Notehead>;
 
@@ -15,6 +16,7 @@ type NoteheadList = Vec<Notehead>;
 pub struct Chord {
     noteheads: NoteheadList,
     written_duration: Duration,
+    attachments: Vec<Attachment>,
 }
 
 impl Chord {
@@ -31,6 +33,7 @@ impl Chord {
             Ok(Self {
                 noteheads,
                 written_duration,
+                attachments: vec![],
             })
         } else {
             Err(Error::UnprintableDuration(written_duration))
@@ -63,6 +66,10 @@ impl Chord {
             .map(|&p| Notehead::new(p))
             .collect::<NoteheadList>()
     }
+
+    pub fn attach(&mut self, attachment: Attachment) {
+        self.attachments.push(attachment);
+    }
 }
 
 impl Leaf for Chord {
@@ -89,13 +96,16 @@ impl Leaf for Chord {
 
 impl ToLilypond for Chord {
     fn to_lilypond(&self) -> Result<String, Error> {
-        match self.written_duration.to_lilypond() {
-            Ok(duration_lilypond) => Ok(format!(
-                "<\n{}\n>{duration_lilypond}",
-                noteheads_to_lily(&self.noteheads),
-            )),
-            Err(err) => Err(err),
-        }
+        let (b, a) = prepare_attachments(&self.attachments);
+        Ok(format!(
+            "{}\n<\n{}\n>{}\n{}",
+            b.trim(),
+            noteheads_to_lily(&self.noteheads),
+            self.written_duration.to_lilypond().unwrap(),
+            indent(a.trim()),
+        )
+        .trim()
+        .to_string())
     }
 }
 
