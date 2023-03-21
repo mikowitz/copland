@@ -60,6 +60,7 @@ impl Div<Duration> for Duration {
 impl Div<i32> for Duration {
     type Output = Duration;
 
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn div(self, rhs: i32) -> Self::Output {
         let (a, b) = self.to_pair();
         Duration::new(a, b * rhs)
@@ -93,6 +94,23 @@ impl Duration {
 
     pub fn abs(&self) -> Self {
         Self::new(self.numerator.abs(), self.denominator.abs())
+    }
+
+    pub fn is_printable(&self) -> bool {
+        self.is_printable_duration() && self.has_printable_denominator() && !self.is_tied()
+    }
+
+    fn is_printable_duration(&self) -> bool {
+        let f = self.to_float();
+        0. < f && f < 16.
+    }
+
+    fn has_printable_denominator(&self) -> bool {
+        self.denominator & (self.denominator - 1) == 0
+    }
+
+    fn is_tied(&self) -> bool {
+        format!("{:b}", self.numerator).contains("01")
     }
 }
 
@@ -181,5 +199,14 @@ mod tests {
 
         assert_eq!(d1.abs(), Duration::new(1, 3));
         assert_eq!(d2.abs(), d2);
+    }
+
+    #[test]
+    fn is_printable() {
+        assert!(Duration::new(1, 2).is_printable());
+        assert!(!Duration::new(-1, 2).is_printable());
+        assert!(!Duration::new(16, 1).is_printable());
+        assert!(!Duration::new(1, 3).is_printable());
+        assert!(!Duration::new(5, 8).is_printable());
     }
 }
