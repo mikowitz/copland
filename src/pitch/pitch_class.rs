@@ -1,7 +1,7 @@
 use super::{Accidental, DiatonicPitchClass};
 use crate::has_semitones::HasSemitones;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct PitchClass {
     diatonic_pitch_class: DiatonicPitchClass,
     accidental: Accidental,

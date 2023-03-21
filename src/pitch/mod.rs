@@ -16,7 +16,7 @@ impl HasSemitones for Octave {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Pitch {
     pitch_class: PitchClass,
     octave: Octave,
